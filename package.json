@@ -1,0 +1,14 @@
+{
+  "name": "autoclose-html",
+  "main": "./lib/autoclose-html",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Automates closing of HTML Tags",
+  "repository": "https://github.com/atom/autoclose-html",
+  "license": "MIT",
+  "engines": {
+    "atom": ">0.50.0"
+  },
+  "dependencies": {
+  }
+}

@@ -1,0 +1,16 @@
+# See https://atom.io/docs/latest/creating-a-package#menus for more details
+'context-menu':
+  '.overlayer':
+      'Toggle Autoclose at End of Opening Tag (>)': 'autoclose-html:toggleAutoclose'
+
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'autoclose-html'
+      'submenu': [
+        { 'label': 'Toggle', 'command': 'autoclose-html:toggleAutoclose' }
+      ]
+    ]
+  }
+]
