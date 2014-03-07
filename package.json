@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Automates closing of HTML Tags",
-  "repository": "https://github.com/atom/autoclose-html",
+  "repository": "https://github.com/mattberkowitz/autoclose-html",
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"
