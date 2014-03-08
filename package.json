@@ -2,7 +2,7 @@
   "name": "autoclose-html",
   "author": "Matt Berkowitz",
   "main": "./lib/autoclose-html",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Automates closing of HTML Tags",
   "repository": "https://github.com/mattberkowitz/autoclose-html",
