@@ -1,4 +1,4 @@
-# autoclose-html package
+# Auto Close HTML package for Atom Text Editor
 
 Will automatically add closing tags when you complete the opening tag.
 
