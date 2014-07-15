@@ -6,16 +6,12 @@ Install using
 
 `apm install autoclose-html`
 
-You need to check "Close on End of Opening Tag" in Atom > Preferences... > Autoclose Html to enable
-
 Under normal circumstances ending tags will be inserted on the same line for inline elements and with `\n\t\n` in between for block elements. This is determined by attaching an element of the given type to the window and checking it's calculated `display` value.
 You can use Force Inline and Force Block preferences to override this.
 
+0.7.0 Note: Removed the option to enable/disable auto closing. Just disable/remove the plugin to stop.
+
 # Options
-
-## Close on end of opening tag
-
-This is the main option to enable/disable the plugin from running. When enabled, upon completion of the opening tag (when you type `>`) it will add the appropriate closing tag for you.
 
 ## Force Inline
 
