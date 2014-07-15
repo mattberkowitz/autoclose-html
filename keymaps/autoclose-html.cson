@@ -7,5 +7,4 @@
 
 # For more detailed documentation see
 # https://atom.io/docs/latest/advanced/keymaps
-'.workspace':
-  'ctrl-alt-o': 'autoclose-html:toggleAutoclose'
+#'.workspace':

@@ -1,7 +1,4 @@
 .DS_Store
 npm-debug.log
 node_modules
-
-test.html
-
-test.php
+test.*

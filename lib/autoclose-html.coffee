@@ -1,14 +1,15 @@
 
 concatPattern = /\s*[\s,|]+\s*/g
-tagPattern = /<([a-z]{1}[^>\s]*)/g
+isTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s]*)/i
+isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s]*)/i
+isClosingTagLikePattern = /<\/([a-z]{1}[^>\s]*)/i
 
 module.exports =
 
-    autocloseActive: false
     neverClose:[]
     forceInline: []
     forceBlock: []
-    makeNeverCLoseSelClosing: false
+    makeNeverCLoseSelfClosing: false
     ignoreGrammar: false
     configDefaults:
 
@@ -21,9 +22,6 @@ module.exports =
 
     activate: () ->
 
-        atom.config.observe 'autoclose-html.closeOnEndOfOpeningTag', callNow:true, (value) =>
-            @autocloseActive = value
-
         atom.config.observe 'autoclose-html.neverClose', callNow:true, (value) =>
             @neverClose = value.split(concatPattern)
 
@@ -34,10 +32,12 @@ module.exports =
             @forceBlock = value.split(concatPattern)
 
         atom.config.observe 'autoclose-html.makeNeverCloseElementsSelfClosing', {callNow:true}, (value) =>
-            @makeNeverCloseSelfClosing = value
+            @makeNeverCLoseSelfClosing = value
 
         atom.config.observe 'autoclose-html.ignoreGrammar', callNow:true, (value) =>
             @ignoreGrammar = value
+            atom.workspaceView.eachEditorView (editorView) =>
+                editorView.trigger 'editor:grammar-changed'
 
         @_events()
 
@@ -65,18 +65,16 @@ module.exports =
 
             return if partial.substr(partial.length - 1, 1) is '/'
 
-            matches = partial.match tagPattern
+            return if not (matches = partial.substr(partial.lastIndexOf('<')).match isOpeningTagLikePattern)?
 
-            return if not matches?
-
-            eleTag = matches[matches.length - 1].substr 1
+            eleTag = matches[matches.length - 1]
             if @isNeverClosed(eleTag)
-                if @makeNeverCloseSelfClosing(eleTag)
+                if @makeNeverCLoseSelfClosing
                     setTimeout () ->
                         tag = '/>'
                         if partial.substr partial.length - 1, 1 isnt ' '
                             tag = ' ' + tag
-                        atom.atom.workspace.activePaneItem.backspace()
+                        atom.workspace.activePaneItem.backspace()
                         atom.workspace.activePaneItem.insertText tag
                 return
 
@@ -96,7 +94,7 @@ module.exports =
     _events: () ->
 
         fcn = (e) =>
-            if @autocloseActive and e.newText is '>'
+            if e?.newText is '>'
                 @execAutoclose e
 
         atom.workspaceView.eachEditorView (editorView) =>
