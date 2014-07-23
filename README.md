@@ -29,7 +29,7 @@ Elements in this comma delimited list should *not* render a closing tag
 
 Will convert elements in Never Close list from `<br>` to `<br />`
 
-## Ignore Garmmar
+## Ignore Grammar
 Under normal circumstances this package will only run in editors with HTML set as the grammar. If you would like to force it to run else where, check this.  Please note templating languages which use `<` and `>` for things other than HTML will likely trigger false-positives/be annoying.
 
 
