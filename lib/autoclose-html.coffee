@@ -11,7 +11,6 @@ module.exports =
     forceInline: []
     forceBlock: []
     additionalGrammar: ['HTML']
-    additionalGrammarCount: 0
     makeNeverCLoseSelfClosing: false
     ignoreGrammar: false
     configDefaults:
