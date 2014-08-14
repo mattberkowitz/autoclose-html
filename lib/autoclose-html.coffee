@@ -10,7 +10,7 @@ module.exports =
     neverClose:[]
     forceInline: []
     forceBlock: []
-    additionalGrammar: ['HTML']
+    additionalGrammar: []
     makeNeverCLoseSelfClosing: false
     ignoreGrammar: false
     configDefaults:
@@ -35,7 +35,7 @@ module.exports =
             @forceBlock = value.split(concatPattern)
 
         atom.config.observe 'autoclose-html.additionalGrammar', callNow:true, (value) =>
-            @additionalGrammar = @additionalGrammar.concat(value.split(concatPatternAlt))
+            @additionalGrammar = ['HTML'].concat(value.split(concatPatternAlt))
 
         atom.config.observe 'autoclose-html.makeNeverCloseElementsSelfClosing', {callNow:true}, (value) =>
             @makeNeverCLoseSelfClosing = value
