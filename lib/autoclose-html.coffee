@@ -1,5 +1,6 @@
-
+util = require 'util'
 concatPattern = /\s*[\s,|]+\s*/g
+concatPatternAlt = /\s,\s|\s,|,\s|,/g
 isTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s]*)/i
 isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s]*)/i
 isClosingTagLikePattern = /<\/([a-z]{1}[^>\s]*)/i
@@ -9,6 +10,8 @@ module.exports =
     neverClose:[]
     forceInline: []
     forceBlock: []
+    additionalGrammar: ['HTML']
+    additionalGrammarCount: 0
     makeNeverCLoseSelfClosing: false
     ignoreGrammar: false
     configDefaults:
@@ -18,6 +21,7 @@ module.exports =
         makeNeverCloseElementsSelfClosing: false
         forceInline: 'title, h1, h2, h3, h4, h5, h6'
         forceBlock: ''
+        additionalGrammar: 'HTML'
         ignoreGrammar: false
 
     activate: () ->
@@ -30,6 +34,9 @@ module.exports =
 
         atom.config.observe 'autoclose-html.forceBlock', callNow:true, (value) =>
             @forceBlock = value.split(concatPattern)
+
+        atom.config.observe 'autoclose-html.additionalGrammar', callNow:true, (value) =>
+            @additionalGrammar = @additionalGrammar.concat(value.split(concatPatternAlt))
 
         atom.config.observe 'autoclose-html.makeNeverCloseElementsSelfClosing', {callNow:true}, (value) =>
             @makeNeverCLoseSelfClosing = value
@@ -100,7 +107,7 @@ module.exports =
         atom.workspaceView.eachEditorView (editorView) =>
             editorView.command 'editor:grammar-changed', {}, () =>
                 grammar = editorView.editor.getGrammar()
-                if grammar.name?.length > 0 and (@ignoreGrammar or grammar.name is 'HTML')
+                if grammar.name?.length > 0 and (@ignoreGrammar or grammar.name in @additionalGrammar)
                     editorView.editor.buffer.off 'changed', fcn
                     editorView.editor.buffer.on 'changed', fcn
                 else

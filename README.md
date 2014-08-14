@@ -13,6 +13,9 @@ You can use Force Inline and Force Block preferences to override this.
 
 # Options
 
+## Additional Grammar
+Grammar names in this comma delimited list will be used to run this package.
+
 ## Force Inline
 
 Elements in this comma delimited list will render their closing tags on the same line, even if the display check yields block.
