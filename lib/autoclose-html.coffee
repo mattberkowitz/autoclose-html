@@ -1,4 +1,3 @@
-util = require 'util'
 concatPattern = /\s*[,|]+\s*/g
 isTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s]*)/i
 isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s]*)/i
@@ -104,7 +103,7 @@ module.exports =
         @autocloseFcn = (e) =>
             if e?.newText is '>'
                 @execAutoclose e
-                
+
         atom.workspaceView.eachEditorView (editorView) =>
             editorView.command 'editor:grammar-changed', {}, () =>
                 grammar = editorView.editor.getGrammar()
