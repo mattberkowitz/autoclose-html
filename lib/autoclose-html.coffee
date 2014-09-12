@@ -33,9 +33,9 @@ module.exports =
 
         atom.config.observe 'autoclose-html.additionalGrammars', callNow:true, (value) =>
             if(value.indexOf('*') > -1)
-                @ignoreGramamr = true
+                @ignoreGrammar = true
             else
-                @gramamrs = ['HTML'].concat(value.split(concatPattern))
+                @grammars = ['HTML'].concat(value.split(concatPattern))
 
         atom.config.observe 'autoclose-html.makeNeverCloseElementsSelfClosing', {callNow:true}, (value) =>
             @makeNeverCLoseSelfClosing = value
