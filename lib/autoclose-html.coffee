@@ -22,6 +22,13 @@ module.exports =
 
     activate: () ->
 
+        #keeping this to correct the old value
+        atom.config.observe 'autoclose-html.ignoreGrammar', callNow:true, (value) =>
+            if value is true
+                atom.config.set 'autoclose-html.additionalGrammars', '*'
+                @ignoreGrammar = true
+            atom.config.set 'autoclose-html.ignoreGrammar', null
+
         atom.config.observe 'autoclose-html.neverClose', callNow:true, (value) =>
             @neverClose = value.split(concatPattern)
 
@@ -39,12 +46,6 @@ module.exports =
 
         atom.config.observe 'autoclose-html.makeNeverCloseElementsSelfClosing', {callNow:true}, (value) =>
             @makeNeverCLoseSelfClosing = value
-
-        #keeping this to correct the old value
-        atom.config.observe 'autoclose-html.ignoreGrammar', callNow:true, (value) =>
-            if value is true
-                atom.config.set 'autoclose-html.additionalGrammars', '*'
-            atom.config.set 'autoclose-html.ignoreGrammar', null
 
         @_events()
 
