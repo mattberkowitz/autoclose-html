@@ -23,28 +23,28 @@ module.exports =
     activate: () ->
 
         #keeping this to correct the old value
-        atom.config.observe 'autoclose-html.ignoreGrammar', callNow:true, (value) =>
+        atom.config.onDidChange 'autoclose-html.ignoreGrammar', (value) =>
             if value is true
                 atom.config.set 'autoclose-html.additionalGrammars', '*'
                 @ignoreGrammar = true
             atom.config.set 'autoclose-html.ignoreGrammar', null
 
-        atom.config.observe 'autoclose-html.neverClose', callNow:true, (value) =>
+        atom.config.onDidChange 'autoclose-html.neverClose', (value) =>
             @neverClose = value.split(concatPattern)
 
-        atom.config.observe 'autoclose-html.forceInline', callNow:true, (value) =>
+        atom.config.onDidChange 'autoclose-html.forceInline', (value) =>
             @forceInline = value.split(concatPattern)
 
-        atom.config.observe 'autoclose-html.forceBlock', callNow:true, (value) =>
+        atom.config.onDidChange 'autoclose-html.forceBlock', (value) =>
             @forceBlock = value.split(concatPattern)
 
-        atom.config.observe 'autoclose-html.additionalGrammars', callNow:true, (value) =>
-            if(value.indexOf('*') > -1)
+        atom.config.onDidChange 'autoclose-html.additionalGrammars', (value) =>
+            if(value.indexOf('*') > - 1)
                 @ignoreGrammar = true
             else
                 @grammars = ['HTML'].concat(value.split(concatPattern))
 
-        atom.config.observe 'autoclose-html.makeNeverCloseElementsSelfClosing', {callNow:true}, (value) =>
+        atom.config.onDidChange 'autoclose-html.makeNeverCloseElementsSelfClosing', (value) =>
             @makeNeverCLoseSelfClosing = value
 
         @_events()
@@ -66,51 +66,44 @@ module.exports =
     isNeverClosed: (eleTag) ->
         eleTag.toLowerCase() in @neverClose
 
-    execAutoclose: (changedEvent) ->
-        if changedEvent.newText is '>'
-            line = atom.workspaceView.getActiveView().editor.buffer.getLines()[changedEvent.newRange.end.row]
-            partial = line.substr 0, changedEvent.newRange.start.column
+    execAutoclose: (editor) ->
+      cursor = editor.getLastCursor()
+      bufferRow = cursor.getBufferRow()
+      bufferColumn = cursor.getBufferColumn()
+      line = cursor.getCurrentBufferLine()
+      partial = line.substr 0, bufferColumn-1
 
-            return if partial.substr(partial.length - 1, 1) is '/'
+      return if partial.substr(partial.length - 1, 1) is '/'
 
-            return if not (matches = partial.substr(partial.lastIndexOf('<')).match isOpeningTagLikePattern)?
+      return if not (matches = partial.substr(partial.lastIndexOf('<')).match isOpeningTagLikePattern)?
 
-            eleTag = matches[matches.length - 1]
-            if @isNeverClosed(eleTag)
-                if @makeNeverCLoseSelfClosing
-                    setTimeout () ->
-                        tag = '/>'
-                        if partial.substr partial.length - 1, 1 isnt ' '
-                            tag = ' ' + tag
-                        atom.workspace.activePaneItem.backspace()
-                        atom.workspace.activePaneItem.insertText tag
-                return
+      eleTag = matches[matches.length - 1]
 
-            isInline = @isInline eleTag
+      if @isNeverClosed(eleTag)
+        if @makeNeverCLoseSelfClosing
+          setTimeout () ->
+            tag = '/>'
+            if partial.substr partial.length - 1, 1 isnt ' '
+              tag = ' ' + tag
+            editor.backspace()
+            editor.insertText tag
+            return
+      isInline = @isInline eleTag
 
-            setTimeout () ->
-                if not isInline
-                    atom.workspace.activePaneItem.insertNewline()
-                    atom.workspace.activePaneItem.insertNewline()
-                atom.workspace.activePaneItem.insertText('</' + eleTag + '>')
-                if isInline
-                    atom.workspace.activePaneItem.setCursorBufferPosition changedEvent.newRange.end
-                else
-                    atom.workspace.activePaneItem.autoIndentBufferRow changedEvent.newRange.end.row + 1
-                    atom.workspace.activePaneItem.setCursorBufferPosition [changedEvent.newRange.end.row + 1, atom.workspace.activePaneItem.getTabText().length * atom.workspace.activePaneItem.indentationForBufferRow(changedEvent.newRange.end.row + 1)]
+      setTimeout () ->
+        if not isInline
+          editor.insertNewline()
+          editor.insertNewline()
+        editor.insertText('</' + eleTag + '>')
+        if isInline
+          editor.setCursorBufferPosition [bufferRow, bufferColumn]
+        else
+          editor.setCursorBufferPosition [bufferRow + 1, editor.getTabText().length * editor.indentationForBufferRow(bufferRow + 1) ]
 
     _events: () ->
-
-        @autocloseFcn = (e) =>
-            if e?.newText is '>'
-                @execAutoclose e
-
-        atom.workspaceView.eachEditorView (editorView) =>
-            editorView.command 'editor:grammar-changed', {}, () =>
-                grammar = editorView.editor.getGrammar()
-                if grammar.name?.length > 0 and (@ignoreGrammar or grammar.name in @grammars)
-                    editorView.editor.buffer.off 'changed.autoclose-html'
-                    editorView.editor.buffer.on 'changed.autoclose-html', @autocloseFcn
-                else
-                    editorView.editor.buffer.off 'changed.autoclose-html'
-            editorView.trigger 'editor:grammar-changed'
+        atom.workspace.observeTextEditors (editor) =>
+          grammar = editor.getGrammar()
+          if grammar.name?.length > 0 and (@ignoreGrammar or grammar.name in @grammars)
+            a = editor.onDidInsertText (e) =>
+              if e.text is '>'
+                @execAutoclose editor
