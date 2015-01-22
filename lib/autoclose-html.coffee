@@ -5,7 +5,7 @@ isClosingTagLikePattern = /<\/([a-z]{1}[^>\s=\'\"]*)/i
 
 module.exports =
 
-    neverClose:[]
+    neverClose: []
     forceInline: []
     forceBlock: []
     grammars: ['HTML']
@@ -23,28 +23,28 @@ module.exports =
     activate: () ->
 
         #keeping this to correct the old value
-        atom.config.onDidChange 'autoclose-html.ignoreGrammar', (value) =>
+        atom.config.observe 'autoclose-html.ignoreGrammar', (value) =>
             if value is true
                 atom.config.set 'autoclose-html.additionalGrammars', '*'
                 @ignoreGrammar = true
             atom.config.set 'autoclose-html.ignoreGrammar', null
 
-        atom.config.onDidChange 'autoclose-html.neverClose', (value) =>
+        atom.config.observe 'autoclose-html.neverClose', (value) =>
             @neverClose = value.split(concatPattern)
 
-        atom.config.onDidChange 'autoclose-html.forceInline', (value) =>
+        atom.config.observe 'autoclose-html.forceInline', (value) =>
             @forceInline = value.split(concatPattern)
 
-        atom.config.onDidChange 'autoclose-html.forceBlock', (value) =>
+        atom.config.observe 'autoclose-html.forceBlock', (value) =>
             @forceBlock = value.split(concatPattern)
 
-        atom.config.onDidChange 'autoclose-html.additionalGrammars', (value) =>
+        atom.config.observe 'autoclose-html.additionalGrammars', (value) =>
             if(value.indexOf('*') > - 1)
                 @ignoreGrammar = true
             else
                 @grammars = ['HTML'].concat(value.split(concatPattern))
 
-        atom.config.onDidChange 'autoclose-html.makeNeverCloseElementsSelfClosing', (value) =>
+        atom.config.observe 'autoclose-html.makeNeverCloseElementsSelfClosing', (value) =>
             @makeNeverCLoseSelfClosing = value
 
         @_events()
@@ -101,9 +101,17 @@ module.exports =
           editor.setCursorBufferPosition [bufferRow + 1, editor.getTabText().length * editor.indentationForBufferRow(bufferRow + 1) ]
 
     _events: () ->
+
+        @autocloseFcn = (e) =>
+            if e?.newText is '>'
+                @execAutoclose e
+
+        insertText = null
         atom.workspace.observeTextEditors (editor) =>
-          grammar = editor.getGrammar()
-          if grammar.name?.length > 0 and (@ignoreGrammar or grammar.name in @grammars)
-            a = editor.onDidInsertText (e) =>
-              if e.text is '>'
-                @execAutoclose editor
+          editor.observeGrammar (grammar) =>
+            if insertText != null
+                 insertText.dispose()
+            if grammar.name?.length > 0 and (@ignoreGrammar or grammar.name in @grammars)
+              insertText = editor.onDidInsertText (e) =>
+                if e.text is '>'
+                  @execAutoclose editor
