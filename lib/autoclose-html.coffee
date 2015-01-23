@@ -22,28 +22,28 @@ module.exports =
 
     activate: () ->
         #keeping this to correct the old value
-        atom.config.observe 'autoclose-html.ignoreGrammar', callNow:true, (value) =>
+        atom.config.observe 'autoclose-html.ignoreGrammar', (value) =>
             if value is true
                 atom.config.set 'autoclose-html.additionalGrammars', '*'
                 @ignoreGrammar = true
             atom.config.set 'autoclose-html.ignoreGrammar', null
 
-        atom.config.observe 'autoclose-html.neverClose', callNow:true, (value) =>
+        atom.config.observe 'autoclose-html.neverClose', (value) =>
             @neverClose = value.split(concatPattern)
 
-        atom.config.observe 'autoclose-html.forceInline', callNow:true, (value) =>
+        atom.config.observe 'autoclose-html.forceInline', (value) =>
             @forceInline = value.split(concatPattern)
 
-        atom.config.observe 'autoclose-html.forceBlock', callNow:true, (value) =>
+        atom.config.observe 'autoclose-html.forceBlock', (value) =>
             @forceBlock = value.split(concatPattern)
 
-        atom.config.observe 'autoclose-html.additionalGrammars', callNow:true, (value) =>
+        atom.config.observe 'autoclose-html.additionalGrammars', (value) =>
             if(value.indexOf('*') > -1)
                 @ignoreGrammar = true
             else
                 @grammars = ['HTML'].concat(value.split(concatPattern))
 
-        atom.config.observe 'autoclose-html.makeNeverCloseElementsSelfClosing', {callNow:true}, (value) =>
+        atom.config.observe 'autoclose-html.makeNeverCloseElementsSelfClosing', (value) =>
             @makeNeverCloseSelfClosing = value
 
         @_events()
