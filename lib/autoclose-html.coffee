@@ -105,7 +105,7 @@ module.exports =
             if e?.newText is '>'
                 @execAutoclose e
 
-        atom.workspaceView.eachEditorView (editorView) =>
+        atom.views.getView(atom.workspace).eachEditorView (editorView) =>
             editorView.command 'editor:grammar-changed', {}, () =>
                 grammar = editorView.editor.getGrammar()
                 if grammar.name?.length > 0 and (@ignoreGrammar or grammar.name in @grammars)
