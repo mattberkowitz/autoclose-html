@@ -4,7 +4,6 @@ isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"]*)/i
 isClosingTagLikePattern = /<\/([a-z]{1}[^>\s=\'\"]*)/i
 
 module.exports =
-
     configDefaults:
         closeOnEndOfOpeningTag: false
         neverClose: 'br, hr, img, input, link, meta, area, base, col, command, embed, keygen, param, source, track, wbr'
@@ -49,7 +48,10 @@ module.exports =
         @_events()
 
     isInline: (eleTag) ->
-        ele = document.createElement eleTag
+        try
+            ele = document.createElement eleTag
+        catch
+            return false
 
         if eleTag.toLowerCase() in @forceBlock
             return false
@@ -66,7 +68,7 @@ module.exports =
         eleTag.toLowerCase() in @neverClose
 
     execAutoclose: (changedEvent, editor) ->
-        if changedEvent.newText is '>'
+        if changedEvent?.newText is '>'
             line = editor.buffer.getLines()[changedEvent.newRange.end.row]
             partial = line.substr 0, changedEvent.newRange.start.column
 
@@ -105,5 +107,4 @@ module.exports =
                 bufferEvent.dispose() if bufferEvent?
                 if grammar.name?.length > 0 and (@ignoreGrammar or grammar.name in @grammars)
                     bufferEvent = textEditor.buffer.onDidChange (e) =>
-                        if e?.newText is '>'
-                            @execAutoclose e, textEditor
+                        @execAutoclose e, textEditor
