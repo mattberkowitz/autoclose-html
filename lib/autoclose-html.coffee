@@ -5,7 +5,6 @@ isClosingTagLikePattern = /<\/([a-z]{1}[^>\s=\'\"]*)/i
 
 module.exports =
     configDefaults:
-        closeOnEndOfOpeningTag: false
         neverClose: 'br, hr, img, input, link, meta, area, base, col, command, embed, keygen, param, source, track, wbr'
         makeNeverCloseElementsSelfClosing: false
         forceInline: 'title, h1, h2, h3, h4, h5, h6'
