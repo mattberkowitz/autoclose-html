@@ -33,8 +33,12 @@ module.exports =
 
         #convert ignoreGrammar to addtionalGramamrs = '*'
         if config.get('autoclose-html.ignoreGrammar') is true
-            config.set 'autoclose-html.additionalGrammars', '*'
+            config.set 'autoclose-html.additionalGrammars', ['*']
             config.unset 'autoclose-html.ignoreGrammar'
+
+        #convert additionalGrammars string to array
+        if typeof config.get('autoclose-html.additionalGrammars') is 'string'
+            config.set 'autoclose-html.additionalGrammars', config.get('autoclose-html.additionalGrammars').split(concatPattern)
 
         #convert forceInline string to array
         if typeof config.get('autoclose-html.forceInline') is 'string'
@@ -49,6 +53,6 @@ module.exports =
             config.unset('autoclose-html.neverClose')
             config.set('autoclose-html.neverClose.elements', neverClose.split(concatPattern))
 
-        if !config.get('autoclose-html.makeNeverCloseElementsSelfClosing')?
+        if config.get('autoclose-html.makeNeverCloseElementsSelfClosing')?
             config.set('autoclose-html.neverClose.makeSelfClosing', config.get('autoclose-html.makeNeverCloseElementsSelfClosing'))
             config.unset('autoclose-html.makeNeverCloseElementsSelfClosing')
