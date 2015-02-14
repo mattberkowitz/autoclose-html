@@ -2,9 +2,13 @@ isTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"]*)/i
 isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"]*)/i
 isClosingTagLikePattern = /<\/([a-z]{1}[^>\s=\'\"]*)/i
 
+ConfigSchema = require('./configuration.coffee')
+
+ConfigSchema.migrate(atom.config)
+
 module.exports =
 
-    config: require('./configuration.coffee')
+    config: ConfigSchema.config
 
     neverClose:[]
     forceInline: []
