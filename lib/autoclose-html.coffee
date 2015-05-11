@@ -1,15 +1,13 @@
-concatPattern = /\s*[,|]+\s*/g
 isTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"]*)/i
 isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"]*)/i
 isClosingTagLikePattern = /<\/([a-z]{1}[^>\s=\'\"]*)/i
 
+ConfigSchema = require('./configuration.coffee')
+
+ConfigSchema.migrate(atom.config)
+
 module.exports =
-    configDefaults:
-        neverClose: 'br, hr, img, input, link, meta, area, base, col, command, embed, keygen, param, source, track, wbr'
-        makeNeverCloseElementsSelfClosing: false
-        forceInline: 'title, h1, h2, h3, h4, h5, h6'
-        forceBlock: ''
-        additionalGrammars: ''
+    config: ConfigSchema.config
 
     neverClose:[]
     forceInline: []
@@ -19,29 +17,23 @@ module.exports =
     ignoreGrammar: false
 
     activate: () ->
-        #keeping this to correct the old value
-        atom.config.observe 'autoclose-html.ignoreGrammar', (value) =>
-            if value is true
-                atom.config.set 'autoclose-html.additionalGrammars', '*'
-                @ignoreGrammar = true
-            atom.config.set 'autoclose-html.ignoreGrammar', null
 
         atom.config.observe 'autoclose-html.neverClose', (value) =>
-            @neverClose = value.split(concatPattern)
+            @neverClose = value
 
         atom.config.observe 'autoclose-html.forceInline', (value) =>
-            @forceInline = value.split(concatPattern)
+            @forceInline = value
 
         atom.config.observe 'autoclose-html.forceBlock', (value) =>
-            @forceBlock = value.split(concatPattern)
+            @forceBlock = value
 
         atom.config.observe 'autoclose-html.additionalGrammars', (value) =>
-            if(value.indexOf('*') > -1)
+            if '*' in value
                 @ignoreGrammar = true
             else
-                @grammars = ['HTML'].concat(value.split(concatPattern))
+                @grammars = ['HTML'].concat(value)
 
-        atom.config.observe 'autoclose-html.makeNeverCloseElementsSelfClosing', (value) =>
+        atom.config.observe 'autoclose-html.makeNeverCloseSelfClosing', (value) =>
             @makeNeverCloseSelfClosing = value
 
         @_events()
