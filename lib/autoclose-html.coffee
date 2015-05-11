@@ -1,6 +1,5 @@
-isTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"]*)/i
-isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"]*)/i
-isClosingTagLikePattern = /<\/([a-z]{1}[^>\s=\'\"]*)/i
+isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"]*)$/i
+defaultGrammars = ['HTML', 'HTML (Go)', 'HTML (Rails)', 'HTML (Mustache)', 'HTML (Ruby - ERB)', 'PHP']
 
 ConfigSchema = require('./configuration.coffee')
 
@@ -12,7 +11,7 @@ module.exports =
     neverClose:[]
     forceInline: []
     forceBlock: []
-    grammars: ['HTML']
+    grammars: defaultGrammars
     makeNeverCloseSelfClosing: false
     ignoreGrammar: false
 
@@ -31,7 +30,7 @@ module.exports =
             if '*' in value
                 @ignoreGrammar = true
             else
-                @grammars = ['HTML'].concat(value)
+                @grammars = defaultGrammars.concat(value)
 
         atom.config.observe 'autoclose-html.makeNeverCloseSelfClosing', (value) =>
             @makeNeverCloseSelfClosing = value
@@ -89,7 +88,7 @@ module.exports =
                     editor.setCursorBufferPosition changedEvent.newRange.end
                 else
                     editor.autoIndentBufferRow changedEvent.newRange.end.row + 1
-                    editor.setCursorBufferPosition [changedEvent.newRange.end.row + 1, atom.workspace.activePaneItem.getTabText().length * atom.workspace.activePaneItem.indentationForBufferRow(changedEvent.newRange.end.row + 1)]
+                    editor.setCursorBufferPosition [changedEvent.newRange.end.row + 1, atom.workspace.getActivePaneItem().getTabText().length * atom.workspace.getActivePaneItem().indentationForBufferRow(changedEvent.newRange.end.row + 1)]
 
     _events: () ->
         atom.workspace.observeTextEditors (textEditor) =>

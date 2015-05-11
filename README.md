@@ -9,6 +9,8 @@ Install using
 Under normal circumstances ending tags will be inserted on the same line for inline elements and with `\n\t\n` in between for block elements. This is determined by attaching an element of the given type to the window and checking it's calculated `display` value.
 You can use Force Inline and Force Block preferences to override this.
 
+By Default works for HTML, HTML (Go), HTML (Rails), HTML (Mustache), HTML (Ruby - ERB), PHP
+
 0.7.0 Note: Removed the option to enable/disable auto closing. Just disable/remove the plugin to stop.
 
 # Options
