@@ -19,7 +19,7 @@ module.exports =
 
     activate: () ->
 
-        atom.config.observe 'autoclose-html.neverClose.elements', (value) =>
+        atom.config.observe 'autoclose-html.neverClose', (value) =>
             @neverClose = value
 
         atom.config.observe 'autoclose-html.forceInline', (value) =>
@@ -34,7 +34,7 @@ module.exports =
             else
                 @grammars = ['HTML'].concat(value)
 
-        atom.config.observe 'autoclose-html.neverClose.makeSelfClosing', (value) =>
+        atom.config.observe 'autoclose-html.makeNeverCloseSelfClosing', (value) =>
             @makeNeverCloseSelfClosing = value
 
         @_events()

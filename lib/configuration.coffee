@@ -16,18 +16,15 @@ module.exports =
             type: 'array'
             default: ['head']
         neverClose:
-            type: 'object'
-            properties:
-                elements:
-                    title: 'Never Close Elements'
-                    description: 'Comma delimited list of elements to never close'
-                    type: 'array'
-                    default: ['br', 'hr', 'img', 'input', 'link', 'meta', 'area', 'base', 'col', 'command', 'embed', 'keygen', 'param', 'source', 'track', 'wbr']
-                makeSelfClosing:
-                    title: 'Make Never Close Elements Self-Closing'
-                    description: 'Closes elements with " />" (ie <br> becomes <br />)'
-                    type: 'boolean'
-                    default: true
+            title: 'Never Close Elements'
+            description: 'Comma delimited list of elements to never close'
+            type: 'array'
+            default: ['br', 'hr', 'img', 'input', 'link', 'meta', 'area', 'base', 'col', 'command', 'embed', 'keygen', 'param', 'source', 'track', 'wbr']
+        makNeverCloseeSelfClosing:
+            title: 'Make Never Close Elements Self-Closing'
+            description: 'Closes elements with " />" (ie <br> becomes <br />)'
+            type: 'boolean'
+            default: true
     migrate: (config) ->
         concatPattern = /\s*[,|]+\s*/g
 
@@ -50,9 +47,4 @@ module.exports =
 
         if typeof config.get('autoclose-html.neverClose') is 'string'
             neverClose = config.get('autoclose-html.neverClose')
-            config.unset('autoclose-html.neverClose')
-            config.set('autoclose-html.neverClose.elements', neverClose.split(concatPattern))
-
-        if config.get('autoclose-html.makeNeverCloseElementsSelfClosing')?
-            config.set('autoclose-html.neverClose.makeSelfClosing', config.get('autoclose-html.makeNeverCloseElementsSelfClosing'))
-            config.unset('autoclose-html.makeNeverCloseElementsSelfClosing')
+            config.set('autoclose-html.neverClose', neverClose.split(concatPattern))
