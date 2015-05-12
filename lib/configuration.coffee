@@ -2,7 +2,7 @@ module.exports =
     config:
         additionalGrammars:
             title: 'Additional Grammars'
-            description: 'Comma delimited list of grammar types other than HTML to apply this plugin to, use "*" for all'
+            description: 'Comma delimited list of grammar names, other then HTML and PHP, to apply this plugin to. Use "*" to run for all grammers.'
             type: 'array'
             default: []
         forceInline:
