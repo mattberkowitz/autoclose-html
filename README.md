@@ -17,7 +17,7 @@ By Default works for HTML, HTML (Go), HTML (Rails), HTML (Mustache), HTML (Ruby 
 
 ## Additional Grammar
 
-Comma delimited list grammar names other than HTML will be used to run this package. Use "*" to run under all grammars
+Comma delimited list of grammar names, other then HTML and PHP, to apply this plugin to. Use "*" to run for all grammers.
 
 ## Force Inline
 
