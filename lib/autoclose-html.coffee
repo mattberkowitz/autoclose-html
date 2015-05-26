@@ -1,4 +1,4 @@
-isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"]*)$/i
+isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"]*)[^>]*$/i
 defaultGrammars = ['HTML', 'HTML (Go)', 'HTML (Rails)', 'HTML (Mustache)', 'HTML (Ruby - ERB)', 'PHP']
 
 ConfigSchema = require('./configuration.coffee')
@@ -67,6 +67,7 @@ module.exports =
             return if not (matches = partial.substr(partial.lastIndexOf('<')).match isOpeningTagLikePattern)?
 
             eleTag = matches[matches.length - 1]
+
             if @isNeverClosed(eleTag)
                 if @makeNeverCloseSelfClosing
                     setTimeout ->
