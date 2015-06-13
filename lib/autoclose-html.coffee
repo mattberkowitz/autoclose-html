@@ -58,7 +58,7 @@ module.exports =
         eleTag.toLowerCase() in @neverClose
 
     execAutoclose: (changedEvent, editor) ->
-        if changedEvent?.newText is '>'
+        if changedEvent?.newText is '>' && editor == atom.workspace.getActiveTextEditor()
             line = editor.buffer.getLines()[changedEvent.newRange.end.row]
             partial = line.substr 0, changedEvent.newRange.start.column
 
