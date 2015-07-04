@@ -3,8 +3,6 @@ defaultGrammars = ['HTML', 'HTML (Go)', 'HTML (Rails)', 'HTML (Mustache)', 'HTML
 
 ConfigSchema = require('./configuration.coffee')
 
-ConfigSchema.migrate(atom.config)
-
 module.exports =
     config: ConfigSchema.config
 
@@ -61,10 +59,25 @@ module.exports =
         if changedEvent?.newText is '>' && editor == atom.workspace.getActiveTextEditor()
             line = editor.buffer.getLines()[changedEvent.newRange.end.row]
             partial = line.substr 0, changedEvent.newRange.start.column
+            partial = partial.substr(partial.lastIndexOf('<'))
 
             return if partial.substr(partial.length - 1, 1) is '/'
 
-            return if not (matches = partial.substr(partial.lastIndexOf('<')).match isOpeningTagLikePattern)?
+            singleQuotes = partial.match(/\'/g)
+            doubleQuotes = partial.match(/\"/g)
+            oddSingleQuotes = singleQuotes && (singleQuotes.length % 2)
+            oddDoubleQuotes = doubleQuotes && (doubleQuotes.length % 2)
+
+            return if oddSingleQuotes or oddDoubleQuotes
+
+            index = -1
+            while((index = partial.indexOf('"')) isnt -1)
+                partial = partial.slice(0, index) + partial.slice(partial.indexOf('"', index + 1) + 1)
+
+            while((index = partial.indexOf("'")) isnt -1)
+                partial = partial.slice(0, index) + partial.slice(partial.indexOf("'", index + 1) + 1)
+
+            return if not (matches = partial.match(isOpeningTagLikePattern))?
 
             eleTag = matches[matches.length - 1]
 

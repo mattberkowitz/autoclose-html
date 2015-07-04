@@ -5,6 +5,7 @@ module.exports =
             description: 'Comma delimited list of grammar names, other then HTML and PHP, to apply this plugin to. Use "*" to run for all grammers.'
             type: 'array'
             default: []
+
         forceInline:
             title: 'Force Inline'
             description: 'Elemnts in this comma delimited list will render their closing tag on the same line, even if they are default block'
@@ -25,26 +26,3 @@ module.exports =
             description: 'Closes elements with " />" (ie <br> becomes <br />)'
             type: 'boolean'
             default: true
-    migrate: (config) ->
-        concatPattern = /\s*[,|]+\s*/g
-
-        #convert ignoreGrammar to addtionalGramamrs = '*'
-        if config.get('autoclose-html.ignoreGrammar') is true
-            config.set 'autoclose-html.additionalGrammars', ['*']
-            config.unset 'autoclose-html.ignoreGrammar'
-
-        #convert additionalGrammars string to array
-        if typeof config.get('autoclose-html.additionalGrammars') is 'string'
-            config.set 'autoclose-html.additionalGrammars', config.get('autoclose-html.additionalGrammars').split(concatPattern)
-
-        #convert forceInline string to array
-        if typeof config.get('autoclose-html.forceInline') is 'string'
-            config.set 'autoclose-html.forceInline', config.get('autoclose-html.forceInline').split(concatPattern)
-
-        #convert forceBlock string to array
-        if typeof config.get('autoclose-html.forceBlock') is 'string'
-            config.set 'autoclose-html.forceBlock', config.get('autoclose-html.forceBlock').split(concatPattern)
-
-        if typeof config.get('autoclose-html.neverClose') is 'string'
-            neverClose = config.get('autoclose-html.neverClose')
-            config.set('autoclose-html.neverClose', neverClose.split(concatPattern))
