@@ -21,7 +21,7 @@ Comma delimited list of grammar names, other than HTML and PHP, to apply this pl
 
 ## Force Inline
 
-Elements in this comma delimited list will render their closing tags on the same line, even if they are block by default
+Elements in this comma delimited list will render their closing tags on the same line, even if they are block by default.
 
 ## Force Block
 
