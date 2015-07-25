@@ -1,5 +1,5 @@
 isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"]*)[^>]*$/i
-defaultGrammars = ['HTML', 'HTML (Go)', 'HTML (Rails)', 'HTML (Mustache)', 'HTML (Ruby - ERB)', 'PHP']
+defaultGrammars = ['HTML', 'HTML (Go)', 'HTML (Rails)', 'HTML (Mustache)', 'HTML (Handlebars)', 'HTML (Ruby - ERB)', 'PHP']
 
 ConfigSchema = require('./configuration.coffee')
 
