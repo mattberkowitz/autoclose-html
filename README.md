@@ -40,6 +40,9 @@ Will convert elements in Never Close list from `<br>` to `<br />`
 ~~Under normal circumstances this package will only run in editors with HTML set as the grammar. If you would like to force it to run else where, check this.  Please note templating languages which use `<` and `>` for things other than HTML will likely trigger false-positives/be annoying.~~
 This option was removed in 0.9.0, if you had it checked prior to that Additional Grammars will be set to "*" on load
 
+## Always Inline
+
+If this option is selected, all closing tags will be rendered on the same line.
 
 # TODO
 * Add option to autocomplete after `</` of closing tag. (requires parsing of whole document to figure out what the open element is)

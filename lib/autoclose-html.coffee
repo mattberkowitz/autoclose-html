@@ -12,6 +12,7 @@ module.exports =
     grammars: defaultGrammars
     makeNeverCloseSelfClosing: false
     ignoreGrammar: false
+    alwaysInLine: false
 
     activate: () ->
 
@@ -33,6 +34,9 @@ module.exports =
         atom.config.observe 'autoclose-html.makeNeverCloseSelfClosing', (value) =>
             @makeNeverCloseSelfClosing = value
 
+        atom.config.observe 'autoclose-html.alwaysInLine', (value) =>
+            @alwaysInLine = value
+
         @_events()
 
     isInline: (eleTag) ->
@@ -41,7 +45,9 @@ module.exports =
         catch
             return false
 
-        if eleTag.toLowerCase() in @forceBlock
+        if @alwaysInLine
+            return true
+        else if eleTag.toLowerCase() in @forceBlock
             return false
         else if eleTag.toLowerCase() in @forceInline
             return true
