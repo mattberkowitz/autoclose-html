@@ -51,6 +51,9 @@ module.exports =
         document.body.removeChild ele
 
         ret
+        
+    isJSX: (textEditor) ->
+      if textEditor.getGrammar().scopeName.indexOf('jsx') == -1 then false else true
 
     isNeverClosed: (eleTag) ->
         eleTag.toLowerCase() in @neverClose
@@ -92,13 +95,14 @@ module.exports =
                 return
 
             isInline = @isInline eleTag
+            isJSX = @isJSX atom.workspace.getActiveTextEditor()
 
             setTimeout ->
-                if not isInline
+                if not isInline and not isJSX
                     editor.insertNewline()
                     editor.insertNewline()
                 editor.insertText('</' + eleTag + '>')
-                if isInline
+                if isInline or isJSX
                     editor.setCursorBufferPosition changedEvent.newRange.end
                 else
                     editor.autoIndentBufferRow changedEvent.newRange.end.row + 1
