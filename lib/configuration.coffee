@@ -21,7 +21,7 @@ module.exports =
             description: 'Comma delimited list of elements to never close'
             type: 'array'
             default: ['br', 'hr', 'img', 'input', 'link', 'meta', 'area', 'base', 'col', 'command', 'embed', 'keygen', 'param', 'source', 'track', 'wbr']
-        makNeverCloseeSelfClosing:
+        makeNeverCloseSelfClosing:
             title: 'Make Never Close Elements Self-Closing'
             description: 'Closes elements with " />" (ie <br> becomes <br />)'
             type: 'boolean'
