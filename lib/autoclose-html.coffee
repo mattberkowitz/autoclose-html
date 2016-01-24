@@ -1,7 +1,8 @@
 isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"]*)[^>]*$/i
-defaultGrammars = ['HTML', 'HTML (Go)', 'HTML (Rails)', 'HTML (Angular)', 'HTML (Mustache)', 'HTML (Handlebars)', 'HTML (Ruby - ERB)', 'HTML (Jinja Templates)', 'JavaScript with JSX', 'PHP']
+defaultGrammars = ['HTML', 'HTML (Go)', 'HTML (Rails)', 'HTML (Angular)', 'HTML (Mustache)', 'HTML (Handlebars)', 'HTML (Ruby - ERB)', 'HTML (Jinja Templates)', 'Ember HTMLBars', 'JavaScript with JSX', 'PHP']
 
 ConfigSchema = require('./configuration.coffee')
+{CompositeDisposable} = require 'atom'
 
 module.exports =
     config: ConfigSchema.config
@@ -35,7 +36,14 @@ module.exports =
 
         @_events()
 
+    deactivate: ->
+        @autocloseHTMLEvents.dispose()
+
+
     isInline: (eleTag) ->
+        if @forceInline.indexOf("*") > -1
+            return true
+
         try
             ele = document.createElement eleTag
         catch
@@ -105,10 +113,10 @@ module.exports =
                     editor.setCursorBufferPosition [changedEvent.newRange.end.row + 1, atom.workspace.getActivePaneItem().getTabText().length * atom.workspace.getActivePaneItem().indentationForBufferRow(changedEvent.newRange.end.row + 1)]
 
     _events: () ->
+        if !@autocloseHTMLEvents?
+            @autocloseHTMLEvents = new CompositeDisposable
         atom.workspace.observeTextEditors (textEditor) =>
-            bufferEvent = null
             textEditor.observeGrammar (grammar) =>
-                bufferEvent.dispose() if bufferEvent?
+                textEditor.autocloseHTMLbufferEvent.dispose() if bufferEvent?
                 if grammar.name?.length > 0 and (@ignoreGrammar or grammar.name in @grammars)
-                    bufferEvent = textEditor.buffer.onDidChange (e) =>
-                        @execAutoclose e, textEditor
+                     @autocloseHTMLEvents.add(textEditor.buffer.onDidChange (e) => @execAutoclose e, textEditor)

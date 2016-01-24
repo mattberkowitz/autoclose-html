@@ -2,30 +2,41 @@
 
 Will automatically add closing tags when you complete the opening tag.
 
+# Installation
+
 Install using
 
 `apm install autoclose-html`
 
+# Usage
+
 Under normal circumstances ending tags will be inserted on the same line for inline elements and with `\n\t\n` in between for block elements. This is determined by attaching an element of the given type to the window and checking it's calculated `display` value.
 You can use Force Inline and Force Block preferences to override this.
 
-By Default works for HTML, HTML (Go), HTML (Rails), HTML (Angular), HTML (Mustache), HTML (Handlebars), HTML (Ruby - ERB), PHP
+By Default works for HTML, HTML (Go), HTML (Rails), HTML (Angular), HTML (Mustache), HTML (Handlebars), HTML (Ruby - ERB), HTML (Jinja Templates), Ember HTMLBars, JavaScript with JSX, PHP.  If you feel like another grammar should be supported by default please submit a PR, you can always add
 
-0.7.0 Note: Removed the option to enable/disable auto closing. Just disable/remove the plugin to stop.
+# Bug Reports and Contributing
+
+If you find a bug, please feel free to file an issue. Please understand however that I have very little time to work on this anymore, so most feature requests will not be implemented.
+
+Better than an issue, however, would be to try and fix it yourself and submit a PR.
+
+If you are interested in helping maintain this library, please contact me. As I mentioned, I have very little time to devote to this anymore, so if someone has interest in helping to keep it maintained, I'm open to considering it.
+
 
 # Options
 
 ## Additional Grammar
 
-Comma delimited list of grammar names, other than defauts (see above), to apply this plugin to. Use "*" to run for all grammars.
+Comma delimited list of grammar names, other than defaults (see above), to apply this plugin to. Use "*" to run for all grammars.
 
 ## Force Inline
 
-Elements in this comma delimited list will render their closing tags on the same line, even if they are block by default.
+Elements in this comma delimited list will render their closing tags on the same line, even if they are block by default. You can set this to "*" to force all closing tags to render inline.
 
 ## Force Block
 
-Elements in this comma delimited list will render their closing tags after a tabbed line, even if they are inline by default. If for some reason you think you're being tricky and put an element in both Force Inline and Force Block, block will override inline.
+Elements in this comma delimited list will render their closing tags after a tabbed line, even if they are inline by default. A value of "*" for Force Inline overrides all values in Force Block.
 
 ## Never Close
 
@@ -35,11 +46,11 @@ Elements in this comma delimited list should *not* render a closing tag
 
 Will convert elements in Never Close list from `<br>` to `<br />`
 
-## ~~Ignore Grammar~~
 
-~~Under normal circumstances this package will only run in editors with HTML set as the grammar. If you would like to force it to run else where, check this.  Please note templating languages which use `<` and `>` for things other than HTML will likely trigger false-positives/be annoying.~~
-This option was removed in 0.9.0, if you had it checked prior to that Additional Grammars will be set to "*" on load
+# Changelog
 
-
-# TODO
-* Add option to autocomplete after `</` of closing tag. (requires parsing of whole document to figure out what the open element is)
+#### 0.20.0
+- HTML (Jinja Templates), Ember HTMLBars, JavaScript with JSX added to default grammars, per user requests
+- Dispose events on deactivate (should prevent double closing after an upgrade in the future, although I don't think it will help for this release)
+- Added ability to use "*" for Force Inline Options
+- Some Readme cleanup
