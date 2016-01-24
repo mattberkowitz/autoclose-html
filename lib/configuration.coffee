@@ -26,3 +26,8 @@ module.exports =
             description: 'Closes elements with " />" (ie <br> becomes <br />)'
             type: 'boolean'
             default: true
+        alwaysInLine:
+          title: 'Always Inline'
+          description: 'Overrides forceInline. If this is selected, ALL elements will have their closing tags on the same line'
+          type: 'boolean'
+          default: false
