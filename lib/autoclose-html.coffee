@@ -117,6 +117,7 @@ module.exports =
             @autocloseHTMLEvents = new CompositeDisposable
         atom.workspace.observeTextEditors (textEditor) =>
             textEditor.observeGrammar (grammar) =>
-                textEditor.autocloseHTMLbufferEvent.dispose() if bufferEvent?
+                textEditor.autocloseHTMLbufferEvent.dispose() if textEditor.autocloseHTMLbufferEvent?
                 if grammar.name?.length > 0 and (@ignoreGrammar or grammar.name in @grammars)
-                     @autocloseHTMLEvents.add(textEditor.buffer.onDidChange (e) => @execAutoclose e, textEditor)
+                     textEditor.autocloseHTMLbufferEvent = textEditor.buffer.onDidChange (e) => @execAutoclose e, textEditor
+                     @autocloseHTMLEvents.add(textEditor.autocloseHTMLbufferEvent)
