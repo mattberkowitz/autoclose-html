@@ -54,3 +54,6 @@ Will convert elements in Never Close list from `<br>` to `<br />`
 - Dispose events on deactivate (should prevent double closing after an upgrade in the future, although I don't think it will help for this release)
 - Added ability to use "*" for Force Inline Options
 - Some Readme cleanup
+
+#### 0.21.0
+- Fixed double closing after changing grammar
