@@ -13,8 +13,6 @@ Install using
 Under normal circumstances ending tags will be inserted on the same line for inline elements and with `\n\t\n` in between for block elements. This is determined by attaching an element of the given type to the window and checking it's calculated `display` value.
 You can use Force Inline and Force Block preferences to override this.
 
-By Default works for HTML, HTML (Go), HTML (Rails), HTML (Angular), HTML (Mustache), HTML (Handlebars), HTML (Ruby - ERB), HTML (Jinja Templates), Ember HTMLBars, JavaScript with JSX, PHP.  If you feel like another grammar should be supported by default please submit a PR, you can always add
-
 # Bug Reports and Contributing
 
 If you find a bug, please feel free to file an issue. Please understand however that I have very little time to work on this anymore, so most feature requests will not be implemented.
@@ -25,10 +23,6 @@ If you are interested in helping maintain this library, please contact me. As I 
 
 
 # Options
-
-## Additional Grammar
-
-Comma delimited list of grammar names, other than defaults (see above), to apply this plugin to. Use "*" to run for all grammars.
 
 ## Force Inline
 

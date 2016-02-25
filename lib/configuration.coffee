@@ -1,11 +1,5 @@
 module.exports =
     config:
-        additionalGrammars:
-            title: 'Additional Grammars'
-            description: 'Comma delimited list of grammar names, other than HTML and PHP, to apply this plugin to. Use "*" to run for all grammars.'
-            type: 'array'
-            default: []
-
         forceInline:
             title: 'Force Inline'
             description: 'Elements in this comma delimited list will render their closing tags on the same line, even if they are block by default. Use * to force all closing tags to render inline'
