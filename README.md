@@ -51,3 +51,6 @@ Will convert elements in Never Close list from `<br>` to `<br />`
 
 #### 0.21.0
 - Fixed double closing after changing grammar
+
+### 0.22.0
+- Better way of handling events, solves rebinding problems **and** having to define grammars to apply to
