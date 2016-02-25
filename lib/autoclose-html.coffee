@@ -14,9 +14,10 @@ module.exports =
 
     activate: () ->
 
-        atom.commands.add 'atom-text-editor', 'autoclose-html:close-and-complete': (e) =>
-            atom.workspace.getActiveTextEditor().insertText(">")
-            this.execAutoclose()
+        atom.commands.add 'atom-text-editor', 
+            'autoclose-html:close-and-complete': (e) =>
+                atom.workspace.getActiveTextEditor().insertText(">")
+                this.execAutoclose()
 
 
         atom.config.observe 'autoclose-html.neverClose', (value) =>
