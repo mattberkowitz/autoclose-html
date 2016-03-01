@@ -11,13 +11,20 @@ module.exports =
     forceBlock: []
     makeNeverCloseSelfClosing: false
     ignoreGrammar: false
+    legacyMode: false
 
     activate: () ->
 
-        atom.commands.add 'atom-text-editor', 
+        @autocloseHTMLEvents = new CompositeDisposable
+
+        atom.commands.add 'atom-text-editor',
             'autoclose-html:close-and-complete': (e) =>
-                atom.workspace.getActiveTextEditor().insertText(">")
-                this.execAutoclose()
+                if @legacyMode
+                    console.log(e)
+                    e.abortKeyBinding()
+                else
+                    atom.workspace.getActiveTextEditor().insertText(">")
+                    this.execAutoclose()
 
 
         atom.config.observe 'autoclose-html.neverClose', (value) =>
@@ -32,8 +39,17 @@ module.exports =
         atom.config.observe 'autoclose-html.makeNeverCloseSelfClosing', (value) =>
             @makeNeverCloseSelfClosing = value
 
-    deactivate: ->
+        atom.config.observe 'autoclose-html.legacyMode', (value) =>
+            @legacyMode = value
+            if @legacyMode
+                @_events()
+            else
+                @_unbindEvents()
 
+
+    deactivate: ->
+        if @legacyMode
+            @_unbindEvents()
 
     isInline: (eleTag) ->
         if @forceInline.indexOf("*") > -1
@@ -105,3 +121,17 @@ module.exports =
         else
             editor.autoIndentBufferRow range.end.row + 1
             editor.setCursorBufferPosition [range.end.row + 1, atom.workspace.getActivePaneItem().getTabText().length * atom.workspace.getActivePaneItem().indentationForBufferRow(range.end.row + 1)]
+
+    _events: () ->
+        atom.workspace.observeTextEditors (textEditor) =>
+            textEditor.observeGrammar (grammar) =>
+                textEditor.autocloseHTMLbufferEvent.dispose() if textEditor.autocloseHTMLbufferEvent?
+                if atom.views.getView(textEditor).getAttribute('data-grammar').split(' ').indexOf('html') > -1
+                     textEditor.autocloseHTMLbufferEvent = textEditor.buffer.onDidChange (e) =>
+                         if e?.newText is '>' && textEditor == atom.workspace.getActiveTextEditor()
+                             setTimeout =>
+                                 @execAutoclose()
+                     @autocloseHTMLEvents.add(textEditor.autocloseHTMLbufferEvent)
+
+    _unbindEvents: () ->
+        @autocloseHTMLEvents.dispose()

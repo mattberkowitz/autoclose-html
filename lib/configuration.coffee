@@ -20,3 +20,8 @@ module.exports =
             description: 'Closes elements with " />" (ie &lt;br&gt; becomes &lt;br /&gt;)'
             type: 'boolean'
             default: true
+        legacyMode:
+            title: "Legacy/International Mode"
+            description: "Do not use this unless you use a non-US or non-QUERTY keyboard and/or the plugin isn't working otherwise. USING THIS OPTION WILL OPT YOU OUT OF NEW IMPROVEMENTS/FEATURES POST 0.22.0"
+            type: 'boolean'
+            default: false

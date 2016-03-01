@@ -40,6 +40,17 @@ Elements in this comma delimited list should *not* render a closing tag
 
 Will convert elements in Never Close list from `<br>` to `<br />`
 
+## Legacy/International Mode
+
+Enables the old style of completion detection using buffer events rather than keybindings.
+Atom doesn't work well currently with non-US/non-QUERTY keyboards and will not correctly
+fire events when '>' is pressed and/or fire events for entirely different keys.  **Please note that
+this mode is buggy (ie can complete after undo) and may not be compatible with new
+features and bug fixes in future releases, post-0.22.0** If/when the core issues behind
+keybindings not reporting correctly on international keyboards is solved this option will
+be removed.
+
+
 
 # Changelog
 
@@ -52,5 +63,8 @@ Will convert elements in Never Close list from `<br>` to `<br />`
 #### 0.21.0
 - Fixed double closing after changing grammar
 
-### 0.22.0
+#### 0.22.0
 - Better way of handling events, solves rebinding problems **and** having to define grammars to apply to
+
+#### 0.23.0
+- Added legacy mode for users having problems with event handling introduced in 0.22.0
