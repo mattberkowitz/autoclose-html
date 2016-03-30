@@ -11,3 +11,4 @@
 
 'atom-text-editor[data-grammar~="html"]':
 	'>': 'autoclose-html:close-and-complete'
+	'/': 'autoclose-html:close-and-complete'	# maybe '< /' is better?
