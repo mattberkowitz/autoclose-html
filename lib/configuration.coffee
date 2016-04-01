@@ -21,7 +21,12 @@ module.exports =
             type: 'boolean'
             default: true
         legacyMode:
-            title: "Legacy/International Mode"
+            title: 'Legacy/International Mode'
             description: "Do not use this unless you use a non-US or non-QUERTY keyboard and/or the plugin isn't working otherwise. USING THIS OPTION WILL OPT YOU OUT OF NEW IMPROVEMENTS/FEATURES POST 0.22.0"
+            type: 'boolean'
+            default: false
+        closeOnClosingTags:
+            title: 'Close on Closing Tags'
+            description: 'Closes elements when "/" was typed after "&lt;"'
             type: 'boolean'
             default: false

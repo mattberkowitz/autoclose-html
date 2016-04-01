@@ -16,6 +16,7 @@ module.exports =
     makeNeverCloseSelfClosing: false
     ignoreGrammar: false
     legacyMode: false
+    closeOnClosingTags: false
 
     activate: () ->
         @autocloseHTMLEvents = new CompositeDisposable
@@ -31,8 +32,11 @@ module.exports =
                             atom.workspace.getActiveTextEditor().insertText('>')
                             @execAutoclose(false)
                         when 191    # / was entered
+                            if not @closeOnClosingTags or @getPreviousLetter(1) isnt '<'
+                                e.abortKeyBinding()
+                                break
                             atom.workspace.getActiveTextEditor().insertText('/')
-                            @execAutoclose(true) if @getPreviousLetter(2) is '<'
+                            @execAutoclose(true)
 
 
         atom.config.observe 'autoclose-html.neverClose', (value) =>
@@ -54,13 +58,16 @@ module.exports =
             else
                 @_unbindEvents()
 
+        atom.config.observe 'autoclose-html.closeOnClosingTags', (value) =>
+            @closeOnClosingTags = value
+
 
     deactivate: ->
         if @legacyMode
             @_unbindEvents()
 
     isInline: (eleTag) ->
-        if @forceInline.indexOf("*") > -1
+        if @forceInline.indexOf('*') > -1
             return true
 
         try
@@ -95,12 +102,12 @@ module.exports =
             lastIndex = 0
             while((result = tagPattern.exec(partial)) isnt null)
                 lastIndex = tagPattern.lastIndex
-                continue if result[3] or @isNeverClosed(result[2])  # <tag/> or <br>, i.e.
+                continue if result[3] or @isNeverClosed(result[2])  # <tag/> or <br>, e.g.
 
-                if not result[1]    # open tag
+                if not result[1]    # opening tag, e.g. <tag>
                     tags.push result[2]
                     lcTags.push result[2].toLowerCase()
-                else                # close tag
+                else                # closing tag, e.g. </tag>
                     index = lcTags.lastIndexOf result[2].toLowerCase()
                     if index > -1
                         tags = tags.slice 0, index
@@ -183,6 +190,7 @@ module.exports =
                                     setTimeout =>
                                         @execAutoclose(false)
                                 when '/'
+                                    break if not @closeOnClosingTags
                                     break if @getPreviousLetter(2) isnt '<'
                                     setTimeout =>
                                         @execAutoclose(true)
