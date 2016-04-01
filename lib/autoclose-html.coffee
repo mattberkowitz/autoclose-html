@@ -1,4 +1,8 @@
 isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"]*)[^>]*>$/i
+tagPattern = /<\s*(\/)?\s*([:a-z_][-:.\w]*)(?:".*?"|'.*?'|[^"'>])*?(\/)?\s*>/ig
+# referenced XML spec, but omitted non-ascii characters
+# /<\s*(\/)?\s*([:A-Za-z_\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD][-:.\w\xB7\xC0-\xD6\xD8-\xF6\xF8-\u037D\u037F-\u1FFF\u200C-\u200D\u203F-\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]*)(?:".*?"|'.*?'|[^"'>\/])*(\/)?\s*>/g
+# (\u{10000}-\u{EFFFF} are also valid characters, but I don't know how to use them in regex)
 
 ConfigSchema = require('./configuration.coffee')
 {CompositeDisposable} = require 'atom'
@@ -12,9 +16,9 @@ module.exports =
     makeNeverCloseSelfClosing: false
     ignoreGrammar: false
     legacyMode: false
+    closeOnClosingTags: false
 
     activate: () ->
-
         @autocloseHTMLEvents = new CompositeDisposable
 
         atom.commands.add 'atom-text-editor',
@@ -23,8 +27,16 @@ module.exports =
                     console.log(e)
                     e.abortKeyBinding()
                 else
-                    atom.workspace.getActiveTextEditor().insertText(">")
-                    this.execAutoclose()
+                    switch e.originalEvent.which
+                        when 190    # > was entered
+                            atom.workspace.getActiveTextEditor().insertText('>')
+                            @execAutoclose(false)
+                        when 191    # / was entered
+                            if not @closeOnClosingTags or @getPreviousLetter(1) isnt '<'
+                                e.abortKeyBinding()
+                                break
+                            atom.workspace.getActiveTextEditor().insertText('/')
+                            @execAutoclose(true)
 
 
         atom.config.observe 'autoclose-html.neverClose', (value) =>
@@ -46,13 +58,16 @@ module.exports =
             else
                 @_unbindEvents()
 
+        atom.config.observe 'autoclose-html.closeOnClosingTags', (value) =>
+            @closeOnClosingTags = value
+
 
     deactivate: ->
         if @legacyMode
             @_unbindEvents()
 
     isInline: (eleTag) ->
-        if @forceInline.indexOf("*") > -1
+        if @forceInline.indexOf('*') > -1
             return true
 
         try
@@ -74,64 +89,112 @@ module.exports =
     isNeverClosed: (eleTag) ->
         eleTag.toLowerCase() in @neverClose
 
-    execAutoclose: () ->
+    execAutoclose: (isTagClosing) ->
         editor = atom.workspace.getActiveTextEditor()
-        range = editor.selections[0].getBufferRange()
-        line = editor.buffer.getLines()[range.end.row]
-        partial = line.substr 0, range.start.column
-        partial = partial.substr(partial.lastIndexOf('<'))
+        position = editor.getCursorBufferPosition()
 
-        return if partial.substr(partial.length - 1, 1) is '/'
+        if isTagClosing
+            return false if position.column < 2
+            partial = editor.getTextInBufferRange [[0, 0], [position.row, position.column - 2]]
 
-        singleQuotes = partial.match(/\'/g)
-        doubleQuotes = partial.match(/\"/g)
-        oddSingleQuotes = singleQuotes && (singleQuotes.length % 2)
-        oddDoubleQuotes = doubleQuotes && (doubleQuotes.length % 2)
+            tags = []
+            lcTags = []
+            lastIndex = 0
+            while((result = tagPattern.exec(partial)) isnt null)
+                lastIndex = tagPattern.lastIndex
+                continue if result[3] or @isNeverClosed(result[2])  # <tag/> or <br>, e.g.
 
-        return if oddSingleQuotes or oddDoubleQuotes
+                if not result[1]    # opening tag, e.g. <tag>
+                    tags.push result[2]
+                    lcTags.push result[2].toLowerCase()
+                else                # closing tag, e.g. </tag>
+                    index = lcTags.lastIndexOf result[2].toLowerCase()
+                    if index > -1
+                        tags = tags.slice 0, index
+                        lcTags = lcTags.slice 0, index
 
-        index = -1
-        while((index = partial.indexOf('"')) isnt -1)
-            partial = partial.slice(0, index) + partial.slice(partial.indexOf('"', index + 1) + 1)
+            return false if not tags.length                         # no tags unclosed
+            return false if partial.indexOf('<', lastIndex) > -1    # cursor is in the tag
 
-        while((index = partial.indexOf("'")) isnt -1)
-            partial = partial.slice(0, index) + partial.slice(partial.indexOf("'", index + 1) + 1)
+            eleTag = tags.pop()
+        else
+            partial = editor.getTextInBufferRange [[position.row, 0], position]
 
-        return if not (matches = partial.match(isOpeningTagLikePattern))?
+            return false if partial.substr(partial.length - 1, 1) is '/'
 
-        eleTag = matches[matches.length - 1]
+            singleQuotes = partial.match(/\'/g)
+            doubleQuotes = partial.match(/\"/g)
+            oddSingleQuotes = singleQuotes && (singleQuotes.length % 2)
+            oddDoubleQuotes = doubleQuotes && (doubleQuotes.length % 2)
 
-        if @isNeverClosed(eleTag)
-            if @makeNeverCloseSelfClosing
-                tag = '/>'
-                if partial.substr partial.length - 1, 1 isnt ' '
-                    tag = ' ' + tag
-                editor.backspace()
-                editor.insertText tag
-            return
+            return false if oddSingleQuotes or oddDoubleQuotes
+
+            index = -1
+            while((index = partial.indexOf('"')) isnt -1)
+                partial = partial.slice(0, index) + partial.slice(partial.indexOf('"', index + 1) + 1)
+
+            while((index = partial.indexOf("'")) isnt -1)
+                partial = partial.slice(0, index) + partial.slice(partial.indexOf("'", index + 1) + 1)
+
+            return false if not (matches = partial.match(isOpeningTagLikePattern))?
+
+            eleTag = matches[matches.length - 1]
+
+            if @isNeverClosed(eleTag)
+                if @makeNeverCloseSelfClosing
+                    tag = '/>'
+                    if partial.substr partial.length - 1, 1 isnt ' '
+                        tag = ' ' + tag
+                    editor.backspace()
+                    editor.insertText tag
+                return true
 
         isInline = @isInline eleTag
 
-        if not isInline
-            editor.insertNewline()
-            editor.insertNewline()
-        editor.insertText('</' + eleTag + '>')
-        if isInline
-            editor.setCursorBufferPosition range.end
+        if isTagClosing
+            editor.insertText(eleTag + '>')
+
+            if not isInline
+                editor.insertNewline()
         else
-            editor.autoIndentBufferRow range.end.row + 1
-            editor.setCursorBufferPosition [range.end.row + 1, atom.workspace.getActivePaneItem().getTabText().length * atom.workspace.getActivePaneItem().indentationForBufferRow(range.end.row + 1)]
+            if not isInline
+                editor.insertNewline()
+                editor.insertNewline()
+                editor.autoIndentBufferRow position.row + 1
+
+            editor.insertText('</' + eleTag + '>')
+
+            if isInline
+                editor.setCursorBufferPosition position
+            else
+                editor.setCursorBufferPosition [position.row + 1, atom.workspace.getActivePaneItem().getTabText().length * atom.workspace.getActivePaneItem().indentationForBufferRow(position.row + 1)]
+
+        true
+
+    getPreviousLetter: (offset) ->
+        editor = atom.workspace.getActiveTextEditor()
+        position = editor.getCursorBufferPosition()
+
+        return '' if position.column < offset
+        editor.getTextInBufferRange([[position.row, position.column - offset], [position.row, position.column - offset + 1]])
 
     _events: () ->
         atom.workspace.observeTextEditors (textEditor) =>
             textEditor.observeGrammar (grammar) =>
                 textEditor.autocloseHTMLbufferEvent.dispose() if textEditor.autocloseHTMLbufferEvent?
                 if atom.views.getView(textEditor).getAttribute('data-grammar').split(' ').indexOf('html') > -1
-                     textEditor.autocloseHTMLbufferEvent = textEditor.buffer.onDidChange (e) =>
-                         if e?.newText is '>' && textEditor == atom.workspace.getActiveTextEditor()
-                             setTimeout =>
-                                 @execAutoclose()
-                     @autocloseHTMLEvents.add(textEditor.autocloseHTMLbufferEvent)
+                    textEditor.autocloseHTMLbufferEvent = textEditor.buffer.onDidChange (e) =>
+                        if textEditor == atom.workspace.getActiveTextEditor()
+                            switch e?.newText
+                                when '>'
+                                    setTimeout =>
+                                        @execAutoclose(false)
+                                when '/'
+                                    break if not @closeOnClosingTags
+                                    break if @getPreviousLetter(2) isnt '<'
+                                    setTimeout =>
+                                        @execAutoclose(true)
+                    @autocloseHTMLEvents.add(textEditor.autocloseHTMLbufferEvent)
 
     _unbindEvents: () ->
         @autocloseHTMLEvents.dispose()
