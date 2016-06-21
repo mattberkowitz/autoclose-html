@@ -1,4 +1,4 @@
-isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"]*)[^>]*>$/i
+isOpeningTagLikePattern = /<(?![\!\/])([a-z]{1}[^>\s=\'\"\/]*)[^>\/]*>$/i
 
 ConfigSchema = require('./configuration.coffee')
 {CompositeDisposable} = require 'atom'
@@ -97,7 +97,9 @@ module.exports =
         while((index = partial.indexOf("'")) isnt -1)
             partial = partial.slice(0, index) + partial.slice(partial.indexOf("'", index + 1) + 1)
 
-        return if not (matches = partial.match(isOpeningTagLikePattern))?
+        matches = partial.match(isOpeningTagLikePattern)
+        console.log matches
+        return if not (matches)?
 
         eleTag = matches[matches.length - 1]
 
