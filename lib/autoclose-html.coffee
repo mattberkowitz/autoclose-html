@@ -97,9 +97,7 @@ module.exports =
         while((index = partial.indexOf("'")) isnt -1)
             partial = partial.slice(0, index) + partial.slice(partial.indexOf("'", index + 1) + 1)
 
-        matches = partial.match(isOpeningTagLikePattern)
-        console.log matches
-        return if not (matches)?
+        return if not (partial.match(isOpeningTagLikePattern))?
 
         eleTag = matches[matches.length - 1]
 
