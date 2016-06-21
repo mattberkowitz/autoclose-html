@@ -68,3 +68,6 @@ be removed.
 
 #### 0.23.0
 - Added legacy mode for users having problems with event handling introduced in 0.22.0
+
+#### 0.24.0
+- Stopped self closing tags from auto closing
