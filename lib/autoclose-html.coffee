@@ -17,7 +17,7 @@ module.exports =
 
         @autocloseHTMLEvents = new CompositeDisposable
 
-        atom.commands.add 'atom-text-editor',
+        @closeAndCompleteCommand = atom.commands.add 'atom-text-editor',
             'autoclose-html:close-and-complete': (e) =>
                 if @legacyMode
                     console.log(e)
@@ -50,6 +50,8 @@ module.exports =
     deactivate: ->
         if @legacyMode
             @_unbindEvents()
+
+        @closeAndCompleteCommand.dispose()
 
     isInline: (eleTag) ->
         if @forceInline.indexOf("*") > -1
@@ -97,7 +99,7 @@ module.exports =
         while((index = partial.indexOf("'")) isnt -1)
             partial = partial.slice(0, index) + partial.slice(partial.indexOf("'", index + 1) + 1)
 
-        return if not (partial.match(isOpeningTagLikePattern))?
+        return if not (matches = partial.match(isOpeningTagLikePattern))?
 
         eleTag = matches[matches.length - 1]
 
