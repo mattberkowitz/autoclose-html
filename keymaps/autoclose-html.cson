@@ -9,5 +9,5 @@
 # https://atom.io/docs/latest/advanced/keymaps
 #'.workspace':
 
-'atom-text-editor[data-grammar~="html"]':
+'atom-text-editor[data-grammar~="html"], atom-text-editor[data-grammar~="jsx"]':
 	'>': 'autoclose-html:close-and-complete'
