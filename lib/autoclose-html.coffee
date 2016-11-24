@@ -74,6 +74,7 @@ module.exports =
         ret
 
     isNeverClosed: (eleTag) ->
+        eleTag = eleTag.replace('/', '')
         eleTag.toLowerCase() in @neverClose
 
     execAutoclose: () ->
