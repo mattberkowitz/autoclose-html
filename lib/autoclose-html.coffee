@@ -83,7 +83,7 @@ module.exports =
         partial = line.substr 0, range.start.column
         partial = partial.substr(partial.lastIndexOf('<'))
 
-        return if partial.substr(partial.length - 1, 1) is '/'
+        return if partial.substr(partial.length - 2, 2) is '/>'
 
         singleQuotes = partial.match(/\'/g)
         doubleQuotes = partial.match(/\"/g)
