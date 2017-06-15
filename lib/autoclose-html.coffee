@@ -106,7 +106,7 @@ module.exports =
         if @isNeverClosed(eleTag)
             if @makeNeverCloseSelfClosing
                 tag = '/>'
-                if partial.substr partial.length - 1, 1 isnt ' '
+                if partial.substr(partial.length - 2, 2) isnt ' >'
                     tag = ' ' + tag
                 editor.backspace()
                 editor.insertText tag
