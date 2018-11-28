@@ -83,7 +83,9 @@ module.exports =
         partial = line.substr 0, range.start.column
         partial = partial.substr(partial.lastIndexOf('<'))
 
-        return if partial.substr(partial.length - 1, 1) is '/'
+        # no closing required if char before close is special
+        secondLastChar = partial.substr(partial.length - 1, 1);
+        return if secondLastChar is '/' or secondLastChar is '='
 
         # user has already properly closed the tag
         return if partial.length > 2 and partial.substr(partial.length-3,3) is ' />'
@@ -108,14 +110,16 @@ module.exports =
         if @isNeverClosed(eleTag) || @isNeverClosed(eleTag.substr(0,eleTag.length-1))
 
             if @makeNeverCloseSelfClosing
-
+                tag = '/>'
                 # user has already begun closing tag, need to remove
                 # so that automated tagging doesn't leave duplicate
-                if eleTag.substr(eleTag.length-1) is "/"
+                if eleTag.substr(eleTag.length-1,1) is "/"
                     editor.backspace()
-                tag = '/>'
+                    tag = ' ' + tag
+
                 if partial.substr partial.length - 1, 1 isnt ' '
                     tag = ' ' + tag
+
                 editor.backspace()
                 editor.insertText tag
             return
