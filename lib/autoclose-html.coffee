@@ -116,6 +116,7 @@ module.exports =
 
         if not isInline
             editor.insertNewline()
+            editor.backspace()
             editor.insertNewline()
         editor.insertText('</' + eleTag + '>')
         if isInline
