@@ -83,7 +83,12 @@ module.exports =
         partial = line.substr 0, range.start.column
         partial = partial.substr(partial.lastIndexOf('<'))
 
-        return if partial.substr(partial.length - 1, 1) is '/'
+        # no closing required if char before close is special
+        secondLastChar = partial.substr(partial.length - 1, 1);
+        return if secondLastChar is '/' or secondLastChar is '='
+
+        # user has already properly closed the tag
+        return if partial.length > 2 and partial.substr(partial.length-3,3) is ' />'
 
         singleQuotes = partial.match(/\'/g)
         doubleQuotes = partial.match(/\"/g)
@@ -98,16 +103,23 @@ module.exports =
 
         while((index = partial.indexOf("'")) isnt -1)
             partial = partial.slice(0, index) + partial.slice(partial.indexOf("'", index + 1) + 1)
-
         return if not (matches = partial.match(isOpeningTagLikePattern))?
-
         eleTag = matches[matches.length - 1]
 
-        if @isNeverClosed(eleTag)
+        # or statement accounts for user already half completed the tag
+        if @isNeverClosed(eleTag) || @isNeverClosed(eleTag.substr(0,eleTag.length-1))
+
             if @makeNeverCloseSelfClosing
                 tag = '/>'
+                # user has already begun closing tag, need to remove
+                # so that automated tagging doesn't leave duplicate
+                if eleTag.substr(eleTag.length-1,1) is "/"
+                    editor.backspace()
+                    tag = ' ' + tag
+
                 if partial.substr partial.length - 1, 1 isnt ' '
                     tag = ' ' + tag
+
                 editor.backspace()
                 editor.insertText tag
             return
