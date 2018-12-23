@@ -117,6 +117,7 @@ module.exports =
         if not isInline
             editor.insertNewline()
             editor.insertNewline()
+            editor.outdentSelectedRows()
         editor.insertText('</' + eleTag + '>')
         if isInline
             editor.setCursorBufferPosition range.end
