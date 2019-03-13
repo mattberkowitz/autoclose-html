@@ -25,3 +25,8 @@ module.exports =
             description: "Do not use this unless you use a non-US or non-QUERTY keyboard and/or the plugin isn't working otherwise. USING THIS OPTION WILL OPT YOU OUT OF NEW IMPROVEMENTS/FEATURES POST 0.22.0"
             type: 'boolean'
             default: false
+        alignClosingTag:
+            title: "Align the Closing Tag to the Same Column"
+            description: "When an element is autoclosed, the closing tag will align to the same column as the opening tag."
+            type: 'boolean'
+            default: false

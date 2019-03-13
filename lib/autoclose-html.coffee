@@ -12,6 +12,7 @@ module.exports =
     makeNeverCloseSelfClosing: false
     ignoreGrammar: false
     legacyMode: false
+    alignClosingTag: false
 
     activate: () ->
 
@@ -45,6 +46,9 @@ module.exports =
                 @_events()
             else
                 @_unbindEvents()
+
+        atom.config.observe 'autoclose-html.alignClosingTag', (value) =>
+            @alignClosingTag = value
 
 
     deactivate: ->
@@ -117,6 +121,8 @@ module.exports =
         if not isInline
             editor.insertNewline()
             editor.insertNewline()
+            if @alignClosingTag
+                editor.backspace()
         editor.insertText('</' + eleTag + '>')
         if isInline
             editor.setCursorBufferPosition range.end
