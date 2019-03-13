@@ -121,8 +121,8 @@ module.exports =
         if not isInline
             editor.insertNewline()
             editor.insertNewline()
-        if @alignClosingTag
-          editor.backspace()
+            if @alignClosingTag
+              editor.backspace()
         editor.insertText('</' + eleTag + '>')
         if isInline
             editor.setCursorBufferPosition range.end
