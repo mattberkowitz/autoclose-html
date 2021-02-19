@@ -9,7 +9,7 @@ Install using
 
 `apm install autoclose-html`
 
-Until merge of this fork, install as follows:
+Until merge of this fork, install using temporary installation process as follows:
 
 1. Uninstall autoclose-html 0.24.0
 2. open a terminal and ...
@@ -84,3 +84,6 @@ be removed.
 
 #### 0.24.0
 - Stopped self closing tags from auto closing
+
+#### 0.24.1
+- Fixes extra indentation on block close tags. Presumes the use of autoindent. 
