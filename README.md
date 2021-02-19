@@ -1,12 +1,25 @@
 # Auto Close HTML package for Atom Text Editor
 
 Will automatically add closing tags when you complete the opening tag.
+Updated to correct extra indentation of closing tags on block elements.
 
 # Installation
 
 Install using
 
 `apm install autoclose-html`
+
+Until merge of this fork, install using temporary installation process as follows:
+
+1. Uninstall autoclose-html 0.24.0
+2. open a terminal and ...
+3. > cd ~/.atom/packages
+4. > git clone https://github.com/Ordinal-Data-Inc/autoclose-html.git
+5. > cd autoclose-html
+6. > npm install
+7. > restart Atom
+8. Check that Atom > preferences > packages shows autoclose-html 0.24.1
+9. (Optional) Have a sip of coffee   
 
 # Usage
 
@@ -71,3 +84,6 @@ be removed.
 
 #### 0.24.0
 - Stopped self closing tags from auto closing
+
+#### 0.24.1
+- Fixes extra indentation on block close tags. Presumes the use of autoindent. 
